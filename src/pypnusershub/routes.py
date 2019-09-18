@@ -166,6 +166,25 @@ def check_auth(
     return _check_auth
 
 
+@routes.route('/login/check', methods=['POST'])
+def check_login_exist():
+    try:
+        user_data = request.json
+        try:
+            login = user_data['identifiant']
+
+            user = (models.AppUser
+                    .query
+                    .filter(models.AppUser.identifiant == login)
+                    .count())
+            
+        except Exception as e:
+            return Response(json.dumps({'login_exist': False}), status=200)
+
+        return Response(json.dumps({'login_exist': user>0}), status=200)
+    except Exception as e:
+        return Response(json.dumps({'login_exist': False}), status=200)
+
 
 @routes.route('/login', methods=['POST'])
 def login():
